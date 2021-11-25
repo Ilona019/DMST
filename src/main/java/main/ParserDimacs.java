@@ -7,14 +7,11 @@ import java.util.ArrayList;
 
 /**
  * ParserDimacs in Java
+ *
  * @author Arefeva Ilona
  * @version 1.0
  */
 public class ParserDimacs {
-    
-    public ArrayList<String> coordinatesVertex() {
-        return coordinatesVertex;
-    }
 
     String countVertex;
     ArrayList<String> coordinatesVertex;
@@ -24,21 +21,24 @@ public class ParserDimacs {
         coordinatesVertex = new ArrayList<String>();
     }
 
-    public void parse(String filename){
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))){
+    public void parse(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String currentLine;
             while ((currentLine = br.readLine()) != null) {
-                if(currentLine.startsWith("n "))
-                {
+                if (currentLine.startsWith("n ")) {
                     countVertex = currentLine;
                 }
-                if(Character.isDigit(currentLine.charAt(0))){
+                if (Character.isDigit(currentLine.charAt(0))) {
                     coordinatesVertex.add(currentLine);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> coordinatesVertex() {
+        return coordinatesVertex;
     }
 
 }

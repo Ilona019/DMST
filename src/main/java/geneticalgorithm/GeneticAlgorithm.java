@@ -1,6 +1,7 @@
 package geneticalgorithm;
 
 import main.Matrix;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,9 +18,7 @@ public class GeneticAlgorithm {
     private SelectionType selectionType;//Тип селекции.
     private Matrix matrix;
     private int n;
-    private LinkedList<Individual> reserveChromosomes;
     private double mutationProbability;
-    private int lastIndexUniqueChromosome = 0;
 
     public GeneticAlgorithm(int n, Population population, Matrix matrix) {
         this.matrix = matrix;
@@ -33,7 +32,7 @@ public class GeneticAlgorithm {
         masPair = new int[2 * population.size()];
     }
 
-    public GeneticAlgorithm(Matrix matrix, Population population, String choiceParents, String crossingType, String mutationType, String selectionType, int b, int n, double mutationProbability) {
+    public GeneticAlgorithm(Matrix matrix, Population population, String choiceParents, String crossingType, String mutationType, String selectionType, int n, double mutationProbability) {
         this.matrix = matrix;
 
         this.population = population;
@@ -44,7 +43,6 @@ public class GeneticAlgorithm {
         this.selectionType = SelectionType.EXCLUSION;
         this.mutationProbability = mutationProbability;
         this.n = n;
-        reserveChromosomes = new LinkedList<>();
     }
 
     public enum SelectionType {
@@ -55,11 +53,10 @@ public class GeneticAlgorithm {
     public void selection() {
         switch (selectionType) {
             case EXCLUSION:
-                lastIndexUniqueChromosome = 0;
                 IndividualComparator myIndividualComparator = new IndividualComparator();
                 population.getPopulation().sort(myIndividualComparator);//сортировка возрастанию диаметра и веса дерева
                 int needDelete = population.getPopulation().size() - n;//надо удалить
-                int deleted = 0;//кол-во удалённых хромосом
+                int deleted = 0;// кол-во удалённых хромосом
                 while (deleted != needDelete) {
                     population.getPopulation().removeLast();
                     deleted++;
@@ -69,7 +66,7 @@ public class GeneticAlgorithm {
     }
 
     public enum ChoiceOfParents {
-        PANMIXIA, INBREEDING, OUTBREEDING
+        PANMIXIA
     }
 
     //Выбор родителей, разбиение на пары.
@@ -118,7 +115,7 @@ public class GeneticAlgorithm {
                 Individual currentChromosome;
                 int numberMutation = 0;
                 for (int i = 0; i < population.size(); i++) {
-                    while(numberMutation != 3) {
+                    while (numberMutation != 3) {
                         currentChromosome = population.getAtIndex(i);
                         currentChromosome.mutation(matrix, 1);
                         numberMutation++;
@@ -133,25 +130,6 @@ public class GeneticAlgorithm {
             Individual currentIndividual = population.getAtIndex(i);
             currentIndividual.recalculateFitnessFunction(matrix);
         }
-    }
-
-    public LinkedList<Individual> getReserveChromosomes() {
-        return reserveChromosomes;
-    }
-
-    public boolean existInNewPopulation(Individual ind, List<Individual> list) {
-        for (Individual individual : list) {
-            if (individual.equalsChromosome(ind)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    // Добавить в резервный список хромосому, не ссылку на её, а копию.
-    public void addReserveChromosome(Individual ind) {
-        reserveChromosomes.add(new Individual(ind));
     }
 
     public void singlePointCrossover(Individual parentFirst, Individual parentSecond) {
@@ -182,9 +160,9 @@ public class GeneticAlgorithm {
         descendantChromosome1.changeChromosome(descendantChromosome2.getChromomeStructure(), randomLeftPointCrossing, randomRightPointCrossing);
         descendantChromosome2.changeChromosome(descendantChromosome1.getChromomeStructure(), randomLeftPointCrossing, randomRightPointCrossing);
 
-        if(!existInPopulation(descendantChromosome1))
+        if (!existInPopulation(descendantChromosome1))
             population.addChomosome(descendantChromosome1);
-        if(!existInPopulation(descendantChromosome2))
+        if (!existInPopulation(descendantChromosome2))
             population.addChomosome(descendantChromosome2);
 
     }
